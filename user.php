@@ -1,5 +1,6 @@
 <?php
-include_once ('connection.php');
+
+
 class User {
 	private $db;
 
@@ -13,14 +14,15 @@ class User {
 			$statement = $this->db->prepare("SELECT * FROM user WHERE username=? and password=?");
 			$statement->bindParam(1, $username);
 			$statement->bindParam(2, $password);
-			$statement->execute();
+			$statement->execute(); 
+			$_SESSION['username'] = $username;
+			$_SESSION['password'] = $password;
 
 			if($statement->rowCount() == 1) {
 				
-				echo "User Verified, access granted<br>
-				Your User Details are:<br>
-				$username<br>
-				$password<br>";
+				$statement = ($this->isLoggedIn());
+				echo "You are logged in. Welcome, $username";
+				
 			} else {
 				echo "Incorrect details<br>";
 				echo "Please enter username and password
@@ -50,7 +52,84 @@ class User {
 			$statement = $this->db->prepare("INSERT INTO user (firstname, lastname, email, username, password)
 							VALUES (?, ?, ?, ?, ?)
 								");
-			print_r($statement); 
+			
+			$statement->bindParam(1, $firstname);
+			$statement->bindParam(2, $lastname);
+			$statement->bindParam(3, $email);
+			$statement->bindParam(4, $username);
+			$statement->bindParam(5, $password);
+           	$statement->execute();
+            
+            if($statement) {
+            	echo $this->db->lastInsertId();	
+            	$userid = $this->db->lastInsertId();
+			echo $username . "ggg";
+			echo $userid . "idd";
+            }
+			 
+		
+		else  {
+			echo "Please enter All details like username etc";
+            
+}
+}}
+
+
+	public function getUser() {
+			$username = $_SESSION['username'];
+			
+			echo $username;
+			$statement = $this->db->prepare("SELECT * FROM user WHERE username = '$username'");
+			
+			$statement->bindParam(1, $username);
+			print_r($statement);
+			$statement->execute();
+			foreach ($this->statement->fetch(PDO::FETCH_ASSOC) as $row)
+			{
+				echo $row;
+			}
+/*
+	{ 
+		echo $row['userid'] . ' - ' . $row['firstname'] . ' - ' . $row['lastname'] . ' - ' . $row['email'] . ' - ' . $row['username'] . ' - ' . $row['password'] . '<br />';
+	
+	}
+		
+	if ($this->isLoggedIn()) {
+		echo 'You logged in';
+		
+	} else {
+		echo 'go login';
+	}
+*/
+
+
+		}
+
+
+		public function isLoggedIn() {
+			if(isset($_SESSION['username']) && isset($_SESSION['password'])) {
+				return true;
+				echo "Logged2";
+			} else {echo "Go Log<br>"; }
+		}
+
+		public function logOut() {
+			if(isset($_SESSION['username'])) {
+			session_destroy();
+			unset($_SESSION['username']);
+			return true;
+		} else {
+			echo "You were not logged in";
+		}
+		}
+
+		public function Update($firstname, $lastname, $email, $username, $password) {
+		
+		if($this->Login())
+{			$statement = $this->db->prepare("UPDATE SET user (firstname, lastname, email, username, password)
+							VALUES (?, ?, ?, ?, ?)
+								");
+			
 			$statement->bindParam(1, $firstname);
 			$statement->bindParam(2, $lastname);
 			$statement->bindParam(3, $email);
@@ -59,10 +138,11 @@ class User {
            	$statement->execute();
             echo $this->db->lastInsertId();
 
-			 
-		}
+			 }
+		
 		else  {
 			echo "Please enter All details like username etc";
 }
 }
+
 }
