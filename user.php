@@ -77,33 +77,109 @@ class User {
 
 	public function getUser() {
 			$username = $_SESSION['username'];
+
+			$sql = "SELECT * FROM user WHERE username = '$username'";
+			$stmt = $this->db->query($sql, PDO::FETCH_ASSOC);
+			//echo $username;
+			//print_r($statement);
 			
-			echo $username;
-			$statement = $this->db->prepare("SELECT * FROM user WHERE username = '$username'");
 			
-			$statement->bindParam(1, $username);
-			print_r($statement);
-			$statement->execute();
-			foreach ($this->statement->fetch(PDO::FETCH_ASSOC) as $row)
-			{
-				echo $row;
+			//$statement->execute();
+			foreach($stmt as $row) 			{
+				echo $row['userid'] . ' - ' . $row['firstname'] . ' - ' . $row['lastname'] . ' - ' . $row['email'] . ' - ' . $row['username'] . ' - ' . $row['password'] . '<br />';
+				$userid = $row['userid'];
+				$firstname = $row['firstname'];
+				$lastname = $row['lastname'];
+				$email = $row['email'];
+				$username = $row['username'];
+				$password = $row['password'];
+				echo"<br>Hi $username, ur details are:<br>";
+				echo"<br>userid is $userid<br>";
+				echo"<br>firstname is $firstname<br>";
+				echo"<br>lastname is $lastname<br>";
+				echo"<br>email is $email<br>";
+				echo"<br>username is $username<br>";
+				echo"<br>password is $password<br>";
+
+				echo "Update Details:<br><br>";
+
+
+
+           	}
+
 			}
-/*
-	{ 
-		echo $row['userid'] . ' - ' . $row['firstname'] . ' - ' . $row['lastname'] . ' - ' . $row['email'] . ' - ' . $row['username'] . ' - ' . $row['password'] . '<br />';
-	
-	}
-		
-	if ($this->isLoggedIn()) {
-		echo 'You logged in';
-		
-	} else {
-		echo 'go login';
-	}
-*/
 
 
-		}
+
+	public function Update() {
+			$username = $_SESSION['username'];
+			
+			
+			$sql = "SELECT * FROM user WHERE username = '$username'";
+			$stmt = $this->db->query($sql, PDO::FETCH_ASSOC);
+			echo $username;
+			//print_r($statement);
+			
+			
+			//$statement->execute();
+			foreach($stmt as $row) 			{
+				echo $row['userid'] . ' - ' . $row['firstname'] . ' - ' . $row['lastname'] . ' - ' . $row['email'] . ' - ' . $row['username'] . ' - ' . $row['password'] . '<br />';
+				$userid = $row['userid'];
+				$firstname = $row['firstname'];
+				$lastname = $row['lastname'];
+				$email = $row['email'];
+				$username = $row['username'];
+				$password = $row['password'];
+				echo"<br>Hi $username, ur details are:<br>";
+				echo"<br>userid is $userid<br>";
+				echo"<br>firstname is $firstname<br>";
+				echo"<br>lastname is $lastname<br>";
+				echo"<br>email is $email<br>";
+				echo"<br>username is $username<br>";
+				echo"<br>password is $password<br>";
+
+				echo "Update Details:<br><br>";
+
+
+$firstname = $_POST['firstname'];
+$lastname = $_POST['lastname'];
+$email = $_POST['email'];
+$username = $_POST['username'];
+$password = $row['password'];
+
+$sql = "UPDATE user SET 
+					firstname = :firstname, 
+					lastname = :lastname, 
+					email = :email, 
+					username = :username,
+					password = :password
+					WHERE userid = :userid";
+			$stmt = $this->db->prepare($sql);
+			$stmt->bindParam(1, $firstname);
+			$stmt->bindParam(2, $lastname);
+			$stmt->bindParam(3, $email);
+			$stmt->bindParam(4, $username);
+			$stmt->bindParam(5, $password);
+			$stmt->bindParam(6, $userid);
+			
+           	$stmt->execute(array(':userid' => $userid,
+           							':firstname' => $firstname, 
+           						 ':lastname' => $lastname, 
+           						 ':email' => $email, 
+           						 ':username' => $username, 
+           						 ':password' => $password
+
+
+           								));
+           	if ($stmt->rowCount() == 1) {
+           		echo "Sucessfully updated";
+           	} else {echo "wrong";}
+
+           	}
+
+			}
+
+
 
 
 		public function isLoggedIn() {
@@ -123,10 +199,58 @@ class User {
 		}
 		}
 
+/*
+public function Update($firstname, $lastname, $email, $username, $password) {
+	
+	if($this->getUser()) {
+
+			
+			$statement = $this->db->prepare("UPDATE SET user (firstname, lastname, email, username, password)
+							VALUES (?, ?, ?, ?, ?)
+								");
+			
+			$statement->bindParam(1, $firstname);
+			$statement->bindParam(2, $lastname);
+			$statement->bindParam(3, $email);
+			$statement->bindParam(4, $username);
+			$statement->bindParam(5, $password);
+           	$statement->execute();
+} else {$this->getUser(); }
+}*/
+/*
 		public function Update($firstname, $lastname, $email, $username, $password) {
+	if ($this->isLoggedIn()) {
+		$this->getUser();
+		 }
+			$userid = $row['userid'];
+			$firstname = $row['firstname'];
+				$lastname = $row['lastname'];
+				$email = $row['email'];
+				$username = $row['username'];
+				$password = $row['password'];
+				echo "my email is $email";
+		}
 		
-		if($this->Login())
-{			$statement = $this->db->prepare("UPDATE SET user (firstname, lastname, email, username, password)
+
+
+
+
+
+
+*/
+
+
+
+
+
+	}/*	
+$firstname = $_POST['firstname'];
+	$lastname = $_POST['lastname'];
+	$email = $_POST['email'];
+	$username = $_POST['username'];
+	$password = $_POST['password'];
+
+	$statement = $this->db->prepare("UPDATE SET user (firstname, lastname, email, username, password)
 							VALUES (?, ?, ?, ?, ?)
 								");
 			
@@ -140,9 +264,5 @@ class User {
 
 			 }
 		
-		else  {
-			echo "Please enter All details like username etc";
-}
-}
+*/
 
-}
