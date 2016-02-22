@@ -109,6 +109,7 @@ class User {
 	public function logOut() {
 		session_destroy();
 		unset($_SESSION['userData']);
+		print('loggedddd out');
 		return true;
 	}
 
