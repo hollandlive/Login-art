@@ -37,6 +37,10 @@ class User {
 		$stmt->bindValue(':username', $username, PDO::PARAM_STR);
 		$stmt->bindValue(':password', $password, PDO::PARAM_STR);
 		$stmt->execute();
+		/* var $userData is an array fetched from DB with given username and password
+		I pass this array userData as a var to the function loggedIn()
+
+		*/
 		$userData = $stmt->fetch(PDO::FETCH_ASSOC);
 		//$this->rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		if ($stmt->rowCount() === 1) {
@@ -94,8 +98,18 @@ class User {
 		$this->password = $_SESSION['password'];
 		print $this->username;
 		print $this->password;
+		/* In the function loggedIn which receives $userData as
+		an argument from the function login()
+		where it was declared as a var
+		*/
 		print $_SESSION['userData'];
 
+	}
+
+	public function logOut() {
+		session_destroy();
+		unset($_SESSION['userData']);
+		return true;
 	}
 
 }
